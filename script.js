@@ -36,7 +36,7 @@ function create() {
     Phaser.Actions.AlignTo(background, Phaser.Display.Align.RIGHT_BOTTOM)
 
     this.bird = this.physics.add.image(config.width / 2, config.height / 2, "bird")
-        .setColliderWorldBounds(true)
+        .setCollideWorldBounds(true)
         .setScale(.05)
     
     for (let i = 1; i < 100; i++) {
@@ -56,10 +56,10 @@ function create() {
         this.pipeUp.body.setOffset(-this.pipeUp.width / 2, -this.pipeUp.height / 2)
 
         this.physics.add.collider(this.pipeUp, this.bird, handleHit, null, this)
-        this.physics.add.collider(this.pipeDown, this.bird)
+        this.physics.add.collider(this.pipeDown, this.bird,handleHit,null,this)
     }
 
-    this.cursors = this.inpu.keyboard.createCursorKeys()
+    this.cursors = this.input.keyboard.createCursorKeys()
     this.keys = this.input.keyboard.addKeys("W, A, S, D")
     this.cameras.main.startFollow(this.bird)
     this.cameras.main.setBounds(0, 0, 5000, config.height)
@@ -73,4 +73,18 @@ function update () {
     if (this.cursors.up.isDown) {
         this.bird.setVelocityY(-250)
     }
+}
+
+function handleHit () {
+    this.hitBird = true
+    this.bird.rotation = this.bird.body.angle
+    this.bird.setVelocityX(0)
+    this.bird.setVelocityY(-500)
+    this.bird.setGravityY(1000)
+    this.bird.setCollideWorldBounds(false)
+    this.bird.body.checkCollision.none = true
+
+    setTimeout(() => {
+        this.scene.restart()
+    }, 3500)
 }
